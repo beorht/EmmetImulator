@@ -5,34 +5,24 @@ import { history, undo, redo, isolateHistory } from '@codemirror/commands';
 import { validate, findMarkupErrors, findHandwrittenMarkup, Status } from '../src/services/ValidationService.js';
 import { handwrittenTracking, handwrittenRanges } from '../src/services/HandwrittenTracker.js';
 import { expandAbbreviation, extractAbbreviation } from '../src/services/EmmetService.js';
-import { ExerciseStore, isPractice } from '../src/services/ExerciseStore.js';
+import { ExerciseStore } from '../src/services/ExerciseStore.js';
 import { sanitize } from '../src/components/PreviewFrame.js';
 
 const store = new ExerciseStore();
-const byId = (id) => store.list.find((exercise) => exercise.id === id);
-const list = byId('emmet-006'); // ul>li*3
+// Учебные задачи для проверки валидатора — отдельно от набора практических работ.
+const task = (abbreviation) => ({ mode: 'emmet', expectedHtml: expandAbbreviation(abbreviation).html });
+const list = task('ul>li*3');
 
 describe('ExerciseStore', () => {
-  it('каждое упражнение и демо разворачиваются Emmet без ошибок', () => {
+  it('только 20 практических работ без подсказок и демонстраций: 4 простые, 3 средние, 13 сложных', () => {
+    expect(store.count).toBe(20);
     for (const exercise of store.list) {
-      expect(exercise.expectedHtml).toContain('<');
-      if (isPractice(exercise)) continue;
-      expect(() => expandAbbreviation(exercise.demo.abbreviation)).not.toThrow();
-      expect(exercise.demo.abbreviation).not.toBe(exercise.emmetExpression);
-    }
-  });
-
-  it('после обучения идут 20 практических работ: 4 простых, 3 средних, 13 сложных', () => {
-    const practice = store.list.filter(isPractice);
-    expect(practice).toHaveLength(20);
-    expect(store.list.slice(-20)).toEqual(practice);
-    const byLevel = (level) => practice.filter((exercise) => exercise.difficulty === level).length;
-    expect([byLevel(1), byLevel(2), byLevel(3)]).toEqual([4, 3, 13]);
-    for (const exercise of practice) {
+      expect(exercise.expectedHtml, exercise.id).toContain('<');
       expect(exercise.hints, exercise.id).toBeUndefined();
       expect(exercise.demo, exercise.id).toBeUndefined();
     }
-    expect(store.positionOf(practice[0])).toEqual({ number: 1, total: 20 });
+    const byLevel = (level) => store.list.filter((exercise) => exercise.difficulty === level).length;
+    expect([byLevel(1), byLevel(2), byLevel(3)]).toEqual([4, 3, 13]);
   });
 
   it('эталонное развёртывание проходит собственную проверку', () => {
@@ -68,14 +58,14 @@ describe('validate', () => {
   it('частично верно: структура совпала, не хватает класса', () => {
     const result = validate(
       '<ul><li class="item1"></li><li class="item2"></li><li></li></ul>',
-      byId('emmet-009'),
+      task('ul>li.item$*3'),
     );
     expect(result.status).toBe(Status.partial);
     expect(result.message).toBe('У <li> нет класса item3.');
   });
 
   it('проверяет текст и значения атрибутов', () => {
-    const link = byId('emmet-008');
+    const link = task('a[href=#about]{О нас}');
     expect(validate('<a href="#about">Контакты</a>', link).message)
       .toBe('Текст в <a> должен быть «О нас», а не «Контакты».');
     expect(validate('<a href="#">О нас</a>', link).message)
@@ -83,7 +73,7 @@ describe('validate', () => {
   });
 
   it('пустое ожидаемое значение атрибута принимает любое', () => {
-    const result = validate('<nav><a href="/home">Домой</a></nav>', byId('emmet-004'));
+    const result = validate('<nav><a href="/home">Домой</a></nav>', task('nav>a'));
     expect(result.status).toBe(Status.success);
   });
 
@@ -111,7 +101,7 @@ describe('findHandwrittenMarkup', () => {
   it('разрешает вручную текст и значения атрибутов', () => {
     const code = '<a href="#about">О нас</a>';
     expect(findHandwrittenMarkup(code, [at(code, '#about'), at(code, 'О нас')])).toEqual([]);
-    expect(validate(code, byId('emmet-008'), { handwritten: [at(code, '#about'), at(code, 'О нас')] }).status)
+    expect(validate(code, task('a[href=#about]{О нас}'), { handwritten: [at(code, '#about'), at(code, 'О нас')] }).status)
       .toBe(Status.success);
   });
 
@@ -124,7 +114,7 @@ describe('findHandwrittenMarkup', () => {
     const code = '<div class="card"></div>';
     const typed = at(code, ' class="card"');
     expect(findHandwrittenMarkup(code, [typed])).toEqual([[5, 12], [16, 17]]);
-    const result = validate(code, byId('emmet-002'), { handwritten: [typed] });
+    const result = validate(code, task('div.card'), { handwritten: [typed] });
     expect(result.status).toBe(Status.error);
     expect(result.message).toContain('«<div class="card">»');
   });

@@ -17,8 +17,6 @@
   --code-attr: #5A6E4B;
   --code-string: #A14B33;
   --code-punct: #9A9083;
-  --code-operator: #A14B33;
-  --code-number: #7C6427;
 
   --status-success: #55743F;
   --status-success-bg: #ECF0E3;
@@ -134,11 +132,11 @@ kbd {
   opacity: 0;
 }
 
-/* Появление снизу вверх: сцена → демонстрация → редактор */
+/* Появление снизу вверх: панель → образец → редактор */
 .is-ready .panel,
 .is-ready .topbar { animation: panel-rise 950ms var(--ease-soft) both; }
 .is-ready .topbar { animation-delay: 60ms; }
-.is-ready .demo { animation-delay: 240ms; }
+.is-ready .target { animation-delay: 240ms; }
 .is-ready .practice { animation-delay: 420ms; }
 
 /* Прозрачность набирается быстрее движения — панель не «выпрыгивает», а мягко оседает. */
@@ -176,8 +174,6 @@ kbd {
   letter-spacing: 0.02em;
   color: var(--ink);
 }
-
-.toolbar { display: flex; gap: 6px; }
 
 .icon-btn {
   display: inline-grid;
@@ -265,23 +261,17 @@ kbd {
   white-space: nowrap;
 }
 
-/* ───────────── Демонстрация ───────────── */
-.demo-caption {
-  padding: 6px var(--pad) 0;
-  font-size: 13px;
-  color: var(--text-secondary);
-}
-
-.demo-body {
+/* ───────────── Образец ───────────── */
+.target-body {
   display: grid;
   flex: 1;
-  grid-template-rows: minmax(0, 1.6fr) minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
   gap: 10px;
   min-height: 0;
-  padding: 12px var(--pad);
+  padding: 12px var(--pad) var(--pad);
 }
 
-.demo-pane {
+.target-pane {
   display: flex;
   flex-direction: column;
   min-height: 0;
@@ -292,10 +282,9 @@ kbd {
   border-radius: var(--radius-inner);
 }
 
-.demo-pane figcaption {
+.target-pane figcaption {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   min-height: 31px;
   padding: 4px 8px 4px 12px;
   font-size: 10px;
@@ -306,11 +295,7 @@ kbd {
   border-bottom: 1px solid var(--border);
 }
 
-.demo-result { opacity: 0.45; transition: opacity 400ms var(--ease-out); }
-.demo-result.is-visible { opacity: 1; }
-
-/* Единое поле кода: сокращение набирается и разворачивается на одном месте */
-.demo-code pre {
+.target-code pre {
   flex: 1;
   min-height: 0;
   margin: 0;
@@ -320,51 +305,8 @@ kbd {
   line-height: 1.6;
 }
 
-.demo-abbr {
-  font-size: 15px;
-  font-weight: 500;
-  border-radius: 3px;
-  transition: background-color 220ms;
-}
-
-.demo-code.is-typing .demo-abbr::after {
-  content: '';
-  display: inline-block;
-  width: 2px;
-  height: 1.15em;
-  margin-left: 1px;
-  vertical-align: text-bottom;
-  background: var(--ink);
-  animation: blink 1s steps(1) infinite;
-}
-
-/* Перед заменой сокращение выделяется, как в редакторе */
-.demo-code.is-expanding .demo-abbr { background: rgb(201 183 156 / 0.45); }
-
-@keyframes blink { 50% { opacity: 0; } }
-
-@keyframes fade-in { from { opacity: 0; } }
-
-.keycap {
-  padding: 1px 8px;
-  font-size: 10.5px;
-  letter-spacing: 0.04em;
-  text-transform: none;
-  color: var(--text-muted);
-  border-bottom-width: 3px;
-  border-radius: 6px;
-  transition: background-color 200ms, color 200ms, transform 130ms, border-bottom-width 130ms;
-}
-.demo-code.is-expanding .keycap {
-  color: var(--accent-cream);
-  background: var(--ink);
-  border-color: var(--ink);
-  border-bottom-width: 1px;
-  transform: translateY(2px);
-}
-
-.code-line { display: inline-block; animation: line-in 380ms var(--ease-out) both; animation-delay: calc(var(--i) * 78ms); }
-.code-line.is-static { animation: none; }
+/* При смене задания строки образца проявляются по очереди */
+.code-line { display: inline-block; animation: line-in 380ms var(--ease-out) both; animation-delay: calc(var(--i) * 40ms); }
 
 @keyframes line-in {
   from { opacity: 0; transform: translateY(3px); }
@@ -380,41 +322,12 @@ kbd {
   background: var(--surface);
 }
 
-.steps {
-  display: flex;
-  gap: 6px;
-  margin: 0;
-  padding: 0 var(--pad) 14px;
-  list-style: none;
-}
-
-.steps li {
-  flex: 1;
-  padding-top: 7px;
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-  border-top: 2px solid var(--border);
-  transition: color 260ms, border-color 260ms;
-}
-.steps li.is-done { color: var(--text-secondary); border-color: var(--accent-sand); }
-.steps li.is-active { color: var(--ink); border-color: var(--accent-wood); }
-
-/* Практическая работа: только образец результата, без управления демонстрацией. */
-.demo[data-kind="practice"] :is(.toolbar, .demo-caption, .steps, .keycap) { display: none; }
-.demo[data-kind="practice"] .demo-body { padding-bottom: var(--pad); }
-
-/* Подсветка токенов (демонстрация и подсказки) */
+/* Подсветка токенов в образце */
 .tk-tag { color: var(--code-tag); }
 .tk-attr { color: var(--code-attr); }
 .tk-string { color: var(--code-string); }
 .tk-punct { color: var(--code-punct); }
 .tk-text { color: var(--text-primary); }
-.tk-operator { color: var(--code-operator); font-weight: 600; }
-.tk-selector { color: var(--code-attr); }
-.tk-number { color: var(--code-number); }
 
 /* ───────────── Практика ───────────── */
 .lesson-nav { display: flex; align-items: center; gap: 10px; margin-left: auto; }
@@ -454,19 +367,10 @@ kbd {
 .lesson-dot.is-current { width: 32px; }
 .lesson-dot.is-current::before { background: var(--accent-wood); border-color: var(--accent-wood); }
 
-/* Практические работы — отдельная группа отметок после обучения. */
-.lesson-dots .group-start {
-  margin-left: 8px;
-  padding-left: 10px;
-  border-left: 1.5px solid var(--border);
-}
-.lesson-dot.is-practice::before { border-radius: 999px; }
-
 @media (max-width: 1100px) {
   .lesson-dots { gap: 2px; }
   .lesson-dot { width: 13px; }
   .lesson-dot.is-current { width: 24px; }
-  .lesson-dots .group-start { margin-left: 4px; padding-left: 6px; }
 }
 
 /* На узких экранах отметок слишком много — остаются счётчик и стрелки. */
@@ -504,23 +408,6 @@ kbd {
   background: var(--accent-cream);
   border-radius: 999px;
 }
-
-.hint-btn { gap: 4px; font-size: 12.5px; }
-.hint-btn svg { width: 15px; height: 15px; }
-
-.hints { margin: 0; padding: 0; list-style: none; }
-
-.hint {
-  margin-top: 6px;
-  padding: 6px 10px;
-  font-size: 13px;
-  color: var(--text-secondary);
-  background: var(--accent-cream);
-  border-radius: 8px;
-  animation: fade-in 320ms var(--ease-out) both;
-}
-.hint.is-solution { background: var(--surface); border: 1px dashed var(--accent-sand); }
-.inline-abbr { font-size: 13px; }
 
 .editor-shell {
   display: flex;
@@ -678,7 +565,7 @@ kbd {
   }
 
   .workspace { grid-template-columns: minmax(0, 1fr); }
-  .demo { min-height: 440px; }
+  .target { min-height: 440px; }
   .practice { min-height: 600px; }
 }
 
@@ -695,10 +582,8 @@ kbd {
   .is-ready .panel,
   .is-ready .topbar,
   .instructions.is-entering,
-  .hint,
   .feedback.is-updated,
   .code-line { animation: none; }
-  .demo-code .demo-abbr::after { animation: none; }
   *,
   *::before,
   *::after { transition-duration: 0.01ms !important; }

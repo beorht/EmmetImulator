@@ -2,12 +2,6 @@ import { escapeHtml } from '../services/highlight.js';
 
 const IDLE = {
   status: 'idle',
-  title: 'Повторите приём',
-  message: 'Посмотрите демонстрацию и решите задание по аналогии.',
-};
-
-const PRACTICE_IDLE = {
-  status: 'idle',
   title: 'Самостоятельная работа',
   message: 'Получите с помощью Emmet такой же HTML, как в образце слева.',
 };
@@ -45,8 +39,8 @@ export class FeedbackMessage {
     this.box.classList.add('is-updated');
   }
 
-  reset({ practice = false } = {}) {
-    this.show(practice ? PRACTICE_IDLE : IDLE);
+  reset() {
+    this.show(IDLE);
     this.box.classList.remove('is-updated');
   }
 }

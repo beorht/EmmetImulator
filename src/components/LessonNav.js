@@ -1,8 +1,7 @@
 import { escapeHtml } from '../services/highlight.js';
-import { isPractice } from '../services/ExerciseStore.js';
 import { icons } from './icons.js';
 
-/** Навигация по заданиям в верхней панели: стрелки и отметки решённых, обучение и практические работы — отдельными группами. */
+/** Навигация по заданиям в верхней панели: стрелки и отметки решённых. */
 export class LessonNav {
   constructor(root, { store }) {
     this.store = store;
@@ -34,15 +33,11 @@ export class LessonNav {
     this.dots.innerHTML = store.list
       .map((exercise, i) => {
         const solved = store.solved.has(exercise.id);
-        const practice = isPractice(exercise);
-        const groupStart = practice && !isPractice(store.list[i - 1] ?? exercise);
-        const { number } = store.positionOf(exercise);
         const classes = ['lesson-dot'];
-        if (practice) classes.push('is-practice');
         if (i === store.index) classes.push('is-current');
         if (solved) classes.push('is-solved');
-        return `<li${groupStart ? ' class="group-start"' : ''}><button type="button" class="${classes.join(' ')}" data-index="${i}"
-          aria-label="${practice ? 'Практическая работа' : 'Задание'} ${number}: ${escapeHtml(exercise.title)}${solved ? ', решено' : ''}"
+        return `<li><button type="button" class="${classes.join(' ')}" data-index="${i}"
+          aria-label="Практическая работа ${i + 1}: ${escapeHtml(exercise.title)}${solved ? ', решено' : ''}"
           ${i === store.index ? 'aria-current="step"' : ''}></button></li>`;
       })
       .join('');

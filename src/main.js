@@ -8,17 +8,16 @@ import './styles/main.css';
 
 import { ExerciseStore } from './services/ExerciseStore.js';
 import { validate, Status } from './services/ValidationService.js';
-import { DemoPanel } from './components/DemoPanel.js';
+import { TargetPanel } from './components/TargetPanel.js';
 import { CodeEditorPanel } from './components/CodeEditorPanel.js';
 import { LessonNav } from './components/LessonNav.js';
 
-/** App: связывает упражнения, навигацию, демонстрацию и редактор. */
+/** App: связывает практические работы, навигацию, образец и редактор. */
 function App() {
-  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const store = new ExerciseStore();
 
   const nav = new LessonNav(document.getElementById('lesson-nav'), { store });
-  const demo = new DemoPanel(document.getElementById('demo'), { reducedMotion });
+  const target = new TargetPanel(document.getElementById('target'));
   const editor = new CodeEditorPanel(document.getElementById('practice'), {
     store,
     validate: (code, context) => validate(code, store.current, context),
@@ -35,7 +34,7 @@ function App() {
 
   function showExercise() {
     shownId = store.current.id;
-    demo.load(store.current);
+    target.load(store.current);
     editor.load(store.current);
   }
 

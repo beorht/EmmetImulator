@@ -1,11 +1,8 @@
 import exercises from '../data/exercises.json';
 import { expandAbbreviation } from './EmmetService.js';
 
-/** Практическая работа: только условие и итоговый HTML, без демонстрации и подсказок. */
-export const isPractice = (exercise) => exercise.kind === 'practice';
-
 /**
- * Хранит набор упражнений, текущий индекс и решённые задания.
+ * Хранит практические работы, текущий индекс и решённые задания.
  * Ожидаемый HTML берётся из expectedHtml, а если его нет —
  * получается настоящим развёртыванием emmetExpression.
  */
@@ -26,12 +23,6 @@ export class ExerciseStore {
 
   get count() {
     return this.list.length;
-  }
-
-  /** Номер задания внутри своего раздела: обучение или практические работы. */
-  positionOf(exercise) {
-    const group = this.list.filter((item) => isPractice(item) === isPractice(exercise));
-    return { number: group.indexOf(exercise) + 1, total: group.length };
   }
 
   select(index) {

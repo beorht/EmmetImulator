@@ -6,7 +6,6 @@ import { syntaxHighlighting, HighlightStyle, indentUnit, bracketMatching } from 
 import { tags as t } from '@lezer/highlight';
 
 import { INDENT, expandAbbreviation, extractAbbreviation, EmmetError } from '../services/EmmetService.js';
-import { isPractice } from '../services/ExerciseStore.js';
 import { handwrittenTracking, handwrittenRanges, highlightHandwritten } from '../services/HandwrittenTracker.js';
 import { PreviewFrame } from './PreviewFrame.js';
 import { FeedbackMessage } from './FeedbackMessage.js';
@@ -40,7 +39,7 @@ export class CodeEditorPanel {
     root.innerHTML = `
       <header class="panel-head">
         <div class="panel-heading">
-          <p class="eyebrow"><span class="lesson-kind"></span> · <span class="lesson-count"></span></p>
+          <p class="eyebrow">Практическая работа · <span class="lesson-count"></span></p>
           <h2 class="panel-title" id="practice-title"></h2>
         </div>
       </header>
@@ -64,7 +63,6 @@ export class CodeEditorPanel {
     `;
 
     this.title = root.querySelector('.panel-title');
-    this.lessonKind = root.querySelector('.lesson-kind');
     this.lessonCount = root.querySelector('.lesson-count');
 
     this.instructions = new ExerciseInstructions(root.querySelector('.instructions'));
@@ -214,12 +212,9 @@ export class CodeEditorPanel {
 
   load(exercise) {
     this.title.textContent = exercise.title;
-    const practice = isPractice(exercise);
-    const { number, total } = this.store.positionOf(exercise);
-    this.lessonKind.textContent = practice ? 'Практическая работа' : 'Практика';
-    this.lessonCount.textContent = `${number} / ${total}`;
+    this.lessonCount.textContent = `${this.store.index + 1} / ${this.store.count}`;
     this.instructions.load(exercise);
-    this.feedback.reset({ practice });
+    this.feedback.reset();
     this.view.dispatch({
       changes: { from: 0, to: this.view.state.doc.length, insert: '' },
       selection: { anchor: 0 },

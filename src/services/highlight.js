@@ -1,4 +1,4 @@
-/** Лёгкая подсветка для демонстрации: HTML-разметка и Emmet-сокращения. */
+/** Лёгкая подсветка HTML-разметки для образца. */
 
 export function escapeHtml(text) {
   return text.replace(/[&<>"']/g, (char) => ({
@@ -24,20 +24,4 @@ export function highlightHtml(source) {
     last = match.index + match[0].length;
   }
   return out + span('text', source.slice(last));
-}
-
-export function highlightAbbreviation(source) {
-  let out = '';
-  for (const token of source.matchAll(/\{[^}]*\}?|\[[^\]]*\]?|[>+^*()]|[.#][\w$-]*|\$+|\d+|[^>+^*().#{[$\d]+/g)) {
-    const text = token[0];
-    const kind =
-      text[0] === '{' ? 'string'
-        : text[0] === '[' ? 'attr'
-          : '>+^*()'.includes(text) ? 'operator'
-            : text[0] === '.' || text[0] === '#' ? 'selector'
-              : /^[$\d]/.test(text) ? 'number'
-                : 'tag';
-    out += span(kind, text);
-  }
-  return out;
 }
