@@ -1,0 +1,420 @@
+[
+  {
+    "id": "emmet-001",
+    "title": "Первый тег",
+    "topic": "Имя тега",
+    "description": "Создайте пустой абзац. Наберите имя тега и разверните его клавишей Tab.",
+    "emmetExpression": "p",
+    "mode": "emmet",
+    "validationMode": "structure",
+    "hints": [
+      "Абзац в HTML — это тег p.",
+      "Достаточно одной буквы: Emmet сам допишет угловые скобки и закрывающий тег."
+    ],
+    "difficulty": 1,
+    "demo": {
+      "abbreviation": "h1",
+      "caption": "Имя тега без скобок превращается в пару открывающего и закрывающего тегов."
+    }
+  },
+  {
+    "id": "emmet-002",
+    "title": "Класс через точку",
+    "topic": "Оператор .",
+    "description": "Создайте блок div с классом card.",
+    "emmetExpression": "div.card",
+    "mode": "emmet",
+    "validationMode": "structure",
+    "hints": [
+      "Класс добавляется точкой сразу после имени тега.",
+      "Пробелов внутри сокращения быть не должно."
+    ],
+    "difficulty": 1,
+    "demo": {
+      "abbreviation": "section.hero",
+      "caption": "Точка после тега добавляет атрибут class."
+    }
+  },
+  {
+    "id": "emmet-003",
+    "title": "Идентификатор",
+    "topic": "Оператор #",
+    "description": "Создайте шапку страницы header с идентификатором top.",
+    "emmetExpression": "header#top",
+    "mode": "emmet",
+    "validationMode": "structure",
+    "hints": [
+      "Идентификатор задаётся символом решётки #.",
+      "Сначала имя тега, затем решётка и имя идентификатора."
+    ],
+    "difficulty": 1,
+    "demo": {
+      "abbreviation": "div#app",
+      "caption": "Решётка добавляет атрибут id. Идентификатор на странице должен быть единственным."
+    }
+  },
+  {
+    "id": "emmet-004",
+    "title": "Вложенность",
+    "topic": "Оператор >",
+    "description": "Создайте навигацию nav, внутри которой находится одна ссылка a.",
+    "emmetExpression": "nav>a",
+    "mode": "emmet",
+    "validationMode": "structure",
+    "hints": [
+      "Знак > помещает следующий элемент внутрь предыдущего.",
+      "Ссылка Emmet сразу получает пустой атрибут href — так и задумано."
+    ],
+    "difficulty": 1,
+    "demo": {
+      "abbreviation": "div>p",
+      "caption": "Знак > опускает следующий элемент на уровень глубже — внутрь предыдущего."
+    }
+  },
+  {
+    "id": "emmet-005",
+    "title": "Соседние элементы",
+    "topic": "Оператор +",
+    "description": "Создайте подзаголовок h2 и сразу за ним абзац p — на одном уровне.",
+    "emmetExpression": "h2+p",
+    "mode": "emmet",
+    "validationMode": "structure",
+    "hints": [
+      "Элементы одного уровня соединяются знаком +.",
+      "Здесь не нужна вложенность — абзац стоит рядом с заголовком, а не внутри него."
+    ],
+    "difficulty": 1,
+    "demo": {
+      "abbreviation": "h1+p",
+      "caption": "Знак + ставит элементы рядом, на одном уровне вложенности."
+    }
+  },
+  {
+    "id": "emmet-006",
+    "title": "Повторение",
+    "topic": "Оператор *",
+    "description": "Создайте маркированный список ul с тремя пунктами li.",
+    "emmetExpression": "ul>li*3",
+    "mode": "emmet",
+    "validationMode": "structure",
+    "hints": [
+      "Начните с тега ul.",
+      "Оператор > задаёт вложенность.",
+      "Оператор * повторяет элемент нужное число раз."
+    ],
+    "difficulty": 1,
+    "demo": {
+      "abbreviation": "ol>li*2",
+      "caption": "Звёздочка с числом повторяет элемент столько раз, сколько указано."
+    }
+  },
+  {
+    "id": "emmet-007",
+    "title": "Текст внутри",
+    "topic": "Фигурные скобки {}",
+    "description": "Создайте кнопку button с текстом «Купить».",
+    "emmetExpression": "button{Купить}",
+    "mode": "emmet",
+    "validationMode": "structure",
+    "hints": [
+      "Текст элемента записывается в фигурных скобках.",
+      "Скобки ставятся сразу после имени тега, без пробела."
+    ],
+    "difficulty": 2,
+    "demo": {
+      "abbreviation": "p{Привет, мир}",
+      "caption": "Всё, что в фигурных скобках, становится текстом внутри элемента."
+    }
+  },
+  {
+    "id": "emmet-008",
+    "title": "Атрибуты",
+    "topic": "Квадратные скобки []",
+    "description": "Создайте ссылку a с адресом #about и текстом «О нас».",
+    "emmetExpression": "a[href=#about]{О нас}",
+    "mode": "emmet",
+    "validationMode": "structure",
+    "hints": [
+      "Атрибуты перечисляются в квадратных скобках: [имя=значение].",
+      "Текст ссылки добавьте в фигурных скобках после атрибутов."
+    ],
+    "difficulty": 2,
+    "demo": {
+      "abbreviation": "img[src=photo.jpg alt=Фото]",
+      "caption": "В квадратных скобках задаются любые атрибуты; несколько атрибутов разделяются пробелом."
+    }
+  },
+  {
+    "id": "emmet-009",
+    "title": "Нумерация",
+    "topic": "Счётчик $",
+    "description": "Создайте список ul из трёх пунктов li с классами item1, item2 и item3.",
+    "emmetExpression": "ul>li.item$*3",
+    "mode": "emmet",
+    "validationMode": "structure",
+    "hints": [
+      "Символ $ заменяется порядковым номером повторения.",
+      "Счётчик ставится прямо в имени класса, а умножение — в конце."
+    ],
+    "difficulty": 2,
+    "demo": {
+      "abbreviation": "div.slide$*2",
+      "caption": "Знак $ подставляет номер копии: 1, 2, 3…"
+    }
+  },
+  {
+    "id": "emmet-010",
+    "title": "Подъём на уровень",
+    "topic": "Оператор ^",
+    "description": "Создайте div с заголовком h3 и абзацем p внутри, а кнопку button поставьте уже после div.",
+    "emmetExpression": "div>h3+p^button",
+    "mode": "emmet",
+    "validationMode": "structure",
+    "hints": [
+      "Знак ^ поднимает следующий элемент на один уровень вверх.",
+      "Кнопка должна оказаться соседом div, а не его потомком."
+    ],
+    "difficulty": 3,
+    "demo": {
+      "abbreviation": "section>h2^footer",
+      "caption": "Знак ^ выходит из текущей вложенности: следующий элемент встаёт рядом с родителем."
+    }
+  },
+  {
+    "id": "emmet-011",
+    "title": "Группировка",
+    "topic": "Круглые скобки ()",
+    "description": "Создайте каркас страницы: header с nav внутри, затем main и footer на одном уровне с header.",
+    "emmetExpression": "(header>nav)+main+footer",
+    "mode": "emmet",
+    "validationMode": "structure",
+    "hints": [
+      "Круглые скобки объединяют часть сокращения в группу.",
+      "После закрывающей скобки вложенность сбрасывается — можно продолжать знаком +."
+    ],
+    "difficulty": 3,
+    "demo": {
+      "abbreviation": "(div>p)+aside",
+      "caption": "Скобки изолируют вложенность группы, и следующий элемент встаёт рядом с ней."
+    }
+  },
+  {
+    "id": "emmet-012",
+    "title": "Меню целиком",
+    "topic": "Всё вместе",
+    "description": "Создайте список ul с классом menu: три пункта li, в каждом ссылка a с текстом «Пункт 1», «Пункт 2», «Пункт 3».",
+    "emmetExpression": "ul.menu>li*3>a{Пункт $}",
+    "mode": "emmet",
+    "validationMode": "structure",
+    "hints": [
+      "Соберите сокращение слева направо: список, пункты, ссылки.",
+      "Счётчик $ работает и внутри текста в фигурных скобках.",
+      "Умножение ставится у li — ссылки повторятся вместе с пунктами."
+    ],
+    "difficulty": 3,
+    "demo": {
+      "abbreviation": "nav>ul>li*2>a{Раздел $}",
+      "caption": "Операторы комбинируются: вложенность, умножение и счётчик в одном сокращении."
+    }
+  },
+  {
+    "id": "practice-01",
+    "kind": "practice",
+    "title": "Обёртка",
+    "description": "Создайте блок div с классом wrapper, внутри которого находится абзац p.",
+    "emmetExpression": "div.wrapper>p",
+    "mode": "emmet",
+    "validationMode": "structure",
+    "difficulty": 1
+  },
+  {
+    "id": "practice-02",
+    "kind": "practice",
+    "title": "Нумерованный список",
+    "description": "Создайте нумерованный список ol из пяти пунктов li.",
+    "emmetExpression": "ol>li*5",
+    "mode": "emmet",
+    "validationMode": "structure",
+    "difficulty": 1
+  },
+  {
+    "id": "practice-03",
+    "kind": "practice",
+    "title": "Заголовок сайта",
+    "description": "Создайте заголовок h1 с идентификатором title и текстом «Мой сайт».",
+    "emmetExpression": "h1#title{Мой сайт}",
+    "mode": "emmet",
+    "validationMode": "structure",
+    "difficulty": 1
+  },
+  {
+    "id": "practice-04",
+    "kind": "practice",
+    "title": "Логотип",
+    "description": "Создайте изображение img с адресом logo.png и альтернативным текстом «Логотип».",
+    "emmetExpression": "img[src=logo.png alt=Логотип]",
+    "mode": "emmet",
+    "validationMode": "structure",
+    "difficulty": 1
+  },
+  {
+    "id": "practice-05",
+    "kind": "practice",
+    "title": "О компании",
+    "description": "Создайте секцию section с классом about. Внутри — подзаголовок h2 с текстом «О компании» и пустой абзац p.",
+    "emmetExpression": "section.about>h2{О компании}+p",
+    "mode": "emmet",
+    "validationMode": "structure",
+    "difficulty": 2
+  },
+  {
+    "id": "practice-06",
+    "kind": "practice",
+    "title": "Галерея",
+    "description": "Создайте список ul с классом gallery из четырёх пунктов li с классами photo1, photo2, photo3 и photo4.",
+    "emmetExpression": "ul.gallery>li.photo$*4",
+    "mode": "emmet",
+    "validationMode": "structure",
+    "difficulty": 2
+  },
+  {
+    "id": "practice-07",
+    "kind": "practice",
+    "title": "Подписка",
+    "description": "Создайте форму form с полем input типа email и подсказкой «Почта», а после поля — кнопку button с текстом «Отправить».",
+    "emmetExpression": "form>input[type=email placeholder=Почта]+button{Отправить}",
+    "mode": "emmet",
+    "validationMode": "structure",
+    "difficulty": 2
+  },
+  {
+    "id": "practice-08",
+    "kind": "practice",
+    "title": "Шапка сайта",
+    "description": "Создайте шапку header с классом header. Внутри — блок div с классом logo и рядом с ним навигация nav с тремя ссылками a.",
+    "emmetExpression": "header.header>div.logo+nav>a*3",
+    "mode": "emmet",
+    "validationMode": "structure",
+    "difficulty": 3
+  },
+  {
+    "id": "practice-09",
+    "kind": "practice",
+    "title": "Таблица",
+    "description": "Создайте таблицу table: в thead одна строка tr с двумя ячейками th, в tbody — две строки tr по две ячейки td.",
+    "emmetExpression": "table>thead>tr>th*2^^tbody>tr*2>td*2",
+    "mode": "emmet",
+    "validationMode": "structure",
+    "difficulty": 3
+  },
+  {
+    "id": "practice-10",
+    "kind": "practice",
+    "title": "Карточка товара",
+    "description": "Создайте карточку div с классом card. Внутри по порядку: изображение img с адресом card.jpg и пустым alt, заголовок h3 «Товар», абзац p «Описание» и кнопка button с классом buy и текстом «Купить».",
+    "emmetExpression": "div.card>img[src=card.jpg alt]+h3{Товар}+p{Описание}+button.buy{Купить}",
+    "mode": "emmet",
+    "validationMode": "structure",
+    "difficulty": 3
+  },
+  {
+    "id": "practice-11",
+    "kind": "practice",
+    "title": "Меню разделов",
+    "description": "Создайте список ul с классом nav из четырёх пунктов li с классом nav-item. В каждом пункте — ссылка a с классом nav-link, адресом #section1…#section4 и текстом «Раздел 1»…«Раздел 4».",
+    "emmetExpression": "ul.nav>li.nav-item*4>a.nav-link[href=#section$]{Раздел $}",
+    "mode": "emmet",
+    "validationMode": "structure",
+    "difficulty": 3
+  },
+  {
+    "id": "practice-12",
+    "kind": "practice",
+    "title": "Блог",
+    "description": "Создайте страницу блога: header с заголовком h1 «Блог»; затем main с двумя статьями article, в каждой заголовок h2 «Статья 1» / «Статья 2» и пустой абзац p; в конце footer с текстом «© 2026».",
+    "emmetExpression": "(header>h1{Блог})+(main>article*2>h2{Статья $}+p)+footer{© 2026}",
+    "mode": "emmet",
+    "validationMode": "structure",
+    "difficulty": 3
+  },
+  {
+    "id": "practice-13",
+    "kind": "practice",
+    "title": "Сетка колонок",
+    "description": "Создайте блок div с классом row и тремя колонками div с классами col-1, col-2 и col-3. В каждой колонке — абзац p с текстом «Колонка 1»…«Колонка 3».",
+    "emmetExpression": "div.row>div.col-$*3>p{Колонка $}",
+    "mode": "emmet",
+    "validationMode": "structure",
+    "difficulty": 3
+  },
+  {
+    "id": "practice-14",
+    "kind": "practice",
+    "title": "Форма входа",
+    "description": "Создайте форму form с идентификатором login: подпись label «Логин» и поле input типа text с именем login, подпись label «Пароль» и поле input типа password с именем password, затем кнопка button типа submit с текстом «Войти».",
+    "emmetExpression": "form#login>(label{Логин}+input[type=text name=login])+(label{Пароль}+input[type=password name=password])+button[type=submit]{Войти}",
+    "mode": "emmet",
+    "validationMode": "structure",
+    "difficulty": 3
+  },
+  {
+    "id": "practice-15",
+    "kind": "practice",
+    "title": "Словарь терминов",
+    "description": "Создайте список определений dl из трёх пар: термин dt «Термин 1»…«Термин 3» и сразу за ним определение dd «Определение 1»…«Определение 3».",
+    "emmetExpression": "dl>(dt{Термин $}+dd{Определение $})*3",
+    "mode": "emmet",
+    "validationMode": "structure",
+    "difficulty": 3
+  },
+  {
+    "id": "practice-16",
+    "kind": "practice",
+    "title": "Выбор города",
+    "description": "Создайте выпадающий список select с именем city и тремя вариантами option со значениями city1, city2, city3 и текстом «Город 1», «Город 2», «Город 3».",
+    "emmetExpression": "select[name=city]>option[value=city$]{Город $}*3",
+    "mode": "emmet",
+    "validationMode": "structure",
+    "difficulty": 3
+  },
+  {
+    "id": "practice-17",
+    "kind": "practice",
+    "title": "Слайдер",
+    "description": "Создайте блок div с классом slider и тремя слайдами div с классами slide1, slide2, slide3. В каждом слайде — изображение img с адресом slide1.jpg…slide3.jpg и альтернативным текстом «Слайд 1»…«Слайд 3».",
+    "emmetExpression": "div.slider>div.slide$*3>img[src=slide$.jpg alt=\"Слайд $\"]",
+    "mode": "emmet",
+    "validationMode": "structure",
+    "difficulty": 3
+  },
+  {
+    "id": "practice-18",
+    "kind": "practice",
+    "title": "Тарифы",
+    "description": "Создайте секцию section с классом pricing: заголовок h2 «Тарифы» и блок div с классом plans, в котором три тарифа div с классом plan. В каждом тарифе — заголовок h3 «Тариф 1»…«Тариф 3», пустой абзац p с классом price и кнопка button «Выбрать».",
+    "emmetExpression": "section.pricing>h2{Тарифы}+div.plans>div.plan*3>h3{Тариф $}+p.price+button{Выбрать}",
+    "mode": "emmet",
+    "validationMode": "structure",
+    "difficulty": 3
+  },
+  {
+    "id": "practice-19",
+    "kind": "practice",
+    "title": "Хлебные крошки",
+    "description": "Создайте навигацию nav с классом breadcrumbs. Внутри — нумерованный список ol из трёх пунктов li со ссылками a «Шаг 1»…«Шаг 3», а после списка, внутри nav, абзац p с классом current и текстом «Вы здесь».",
+    "emmetExpression": "nav.breadcrumbs>ol>li*3>a{Шаг $}^^p.current{Вы здесь}",
+    "mode": "emmet",
+    "validationMode": "structure",
+    "difficulty": 3
+  },
+  {
+    "id": "practice-20",
+    "kind": "practice",
+    "title": "Каркас страницы",
+    "description": "Создайте блок div с классом page. Внутри: header с классом top, в нём nav со списком ul из трёх пунктов li со ссылками a «Меню 1»…«Меню 3»; затем main с классом content, в нём заголовок h1 «Главная» и два пустых абзаца p; в конце footer с классом bottom и абзацем p «Контакты».",
+    "emmetExpression": "div.page>(header.top>nav>ul>li*3>a{Меню $})+(main.content>h1{Главная}+p*2)+footer.bottom>p{Контакты}",
+    "mode": "emmet",
+    "validationMode": "structure",
+    "difficulty": 3
+  }
+]
