@@ -257,7 +257,17 @@ export function validate(source, exercise, { handwritten = [] } = {}) {
     return {
       status: Status.mismatch,
       title: 'Пока пусто',
-      message: 'Наберите сокращение в редакторе и нажмите Tab.',
+      message: exercise.mode === 'html'
+        ? 'Напишите HTML-код в редакторе.'
+        : 'Наберите сокращение в редакторе и нажмите Tab.',
+    };
+  }
+
+  if (!code.includes('<') && exercise.mode === 'html') {
+    return {
+      status: Status.mismatch,
+      title: 'Пока нет ни одного тега',
+      message: 'Напишите теги с угловыми скобками или наберите сокращение Emmet отдельной строкой и нажмите Tab.',
     };
   }
 

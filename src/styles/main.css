@@ -261,6 +261,134 @@ kbd {
   white-space: nowrap;
 }
 
+/* ───────────── Студент в верхней панели ───────────── */
+.user-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-left: 14px;
+  border-left: 1px solid var(--border);
+}
+
+.user-name {
+  max-width: 220px;
+  overflow: hidden;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Зелёная точка — результаты доходят до сервера, красная — копятся в очереди. */
+.user-status {
+  width: 8px;
+  height: 8px;
+  flex: none;
+  background: var(--status-success);
+  border-radius: 50%;
+}
+.user-status.is-offline { background: var(--status-error); }
+
+@media (max-width: 720px) {
+  .user-name { display: none; }
+  .user-chip { padding-left: 8px; }
+}
+
+/* Уведомление поверх тетради — например, о возвращении на страницу */
+.toast {
+  position: fixed;
+  left: 50%;
+  top: 74px;
+  z-index: 10;
+  width: max-content;
+  max-width: min(100% - 32px, 520px);
+  padding: 12px 18px;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--bg);
+  background: var(--ink);
+  border-radius: var(--radius-inner);
+  box-shadow: 0 18px 40px -20px rgb(59 56 53 / 0.6);
+  transform: translateX(-50%);
+  animation: toast-in 320ms var(--ease-out) both;
+}
+
+@keyframes toast-in {
+  from { opacity: 0; transform: translate(-50%, -10px); }
+  to { opacity: 1; transform: translateX(-50%); }
+}
+
+/* Образец нельзя выделить и скопировать — только перенабрать сокращением */
+.target-code { user-select: none; }
+
+/* ───────────── Вход ───────────── */
+.login-screen {
+  display: grid;
+  place-items: center;
+  min-height: 100dvh;
+  padding: 16px;
+  /* Тетрадная клетка, как в редакторе */
+  background:
+    linear-gradient(var(--border) 1px, transparent 1px) 0 0 / var(--grid-cell) var(--grid-cell),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px) 0 0 / var(--grid-cell) var(--grid-cell),
+    var(--page);
+}
+
+.login-card {
+  display: flex;
+  flex-direction: column;
+  width: min(100%, 380px);
+  padding: 28px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-panel);
+  box-shadow: 0 18px 40px -24px rgb(59 56 53 / 0.35);
+  animation: panel-rise 950ms var(--ease-soft) both;
+}
+
+.login-title {
+  margin: 26px 0 6px;
+  font: 500 26px/1.15 var(--font-display);
+  letter-spacing: 0.02em;
+  color: var(--ink);
+}
+
+.login-text { font-size: 13px; color: var(--text-secondary); }
+
+.login-label {
+  margin-top: 22px;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--wood-text);
+}
+
+.login-input {
+  height: 48px;
+  margin-top: 6px;
+  padding: 0 14px;
+  font: 500 20px/1 var(--font-code);
+  letter-spacing: 0.08em;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--accent-sand);
+  border-radius: var(--radius-inner);
+}
+.login-input::placeholder { color: var(--accent-sand); }
+.login-input:focus-visible { outline-offset: 0; border-color: var(--accent-wood); }
+.login-input[aria-invalid='true'] { border-color: var(--status-error); }
+
+.login-error {
+  min-height: 20px;
+  margin-top: 6px;
+  font-size: 12.5px;
+  color: var(--status-error);
+}
+
+.login-submit { justify-content: center; height: 44px; margin-top: 6px; }
+
 /* ───────────── Образец ───────────── */
 .target-body {
   display: grid;
@@ -548,6 +676,196 @@ kbd {
 }
 .cm-matchingBracket { background: rgb(184 138 90 / 0.18); outline: none; }
 
+/* ───────────── Схема контейнеров в образце ───────────── */
+.pane-note {
+  margin-left: auto;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: none;
+  color: var(--text-muted);
+}
+.render-target { border-color: var(--accent-sand); }
+.render-target figcaption { color: var(--wood-text); }
+
+/* Переключатель «Браузер / Схема» в образце заданий на контейнеры */
+.view-switch {
+  display: inline-flex;
+  padding: 3px;
+  background: var(--accent-cream);
+  border-radius: 10px;
+}
+.view-tab {
+  height: 28px;
+  padding: 0 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: none;
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.view-tab:hover { color: var(--ink); }
+.view-tab[aria-pressed='true'] { color: var(--ink); background: var(--surface); box-shadow: 0 1px 3px rgb(59 56 53 / 0.15); }
+
+/* Теория и раздел контейнеров в навигации: теория — круглая точка, задания раздела — зелёные */
+.lesson-dot.is-lesson::before { inset: 9px 1px; border-radius: 50%; border-color: #6AA57E; }
+.lesson-dot.is-lesson.is-solved::before { background: #BFDCC8; }
+.lesson-dot.is-lesson.is-current { width: 18px; }
+.lesson-dot.is-lesson.is-current::before { background: #2F7A4A; border-color: #2F7A4A; }
+li:has(> .is-lesson) { margin-left: 8px; }
+.lesson-dot.is-containers::before { border-color: #8CC39E; }
+.lesson-dot.is-containers.is-solved::before { background: #8CC39E; }
+.lesson-dot.is-containers.is-current::before { background: #2F7A4A; border-color: #2F7A4A; }
+
+/* ───────────── Теория ───────────── */
+.lesson {
+  grid-column: 1 / -1;
+  display: block;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+}
+
+.lesson-page {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 28px var(--pad) 40px;
+}
+
+.lesson-hero { padding-bottom: 18px; border-bottom: 1px solid var(--border); }
+.lesson-title {
+  margin: 6px 0 8px;
+  font: 500 34px/1.1 var(--font-display);
+  letter-spacing: 0.01em;
+  color: var(--ink);
+}
+.lesson-lead { max-width: 640px; font-size: 15px; color: var(--text-secondary); }
+
+.lesson-section { padding: 26px 0 8px; }
+.lesson-section > p { max-width: 760px; margin: 10px 0; }
+.lesson-section :not(pre) > code { padding: 0 4px; font-size: 12.5px; background: var(--accent-cream); border-radius: 4px; }
+
+.lesson-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 6px;
+  font: 500 24px/1.2 var(--font-display);
+  color: var(--ink);
+}
+.lesson-num {
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  font: 600 15px/1 var(--font-ui);
+  color: var(--bg);
+  background: var(--ink);
+  border-radius: 9px;
+}
+.lesson-num svg { width: 18px; height: 18px; }
+.lesson-subheading { margin: 22px 0 8px; font-size: 15px; font-weight: 600; color: var(--ink); }
+
+.lesson-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  margin: 14px 0 6px;
+}
+.lesson-card {
+  --tone: var(--accent-wood);
+  --tone-bg: var(--surface);
+  padding: 14px 16px;
+  background: var(--tone-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-inner);
+}
+.lesson-card h3 { margin: 0 0 4px; font-size: 15px; font-weight: 600; color: var(--ink); }
+.lesson-card > code { display: inline-block; margin-bottom: 6px; padding: 0; font-size: 14px; font-weight: 600; color: var(--tone); background: none; }
+.lesson-card h3 code { padding: 0; font-size: 15px; color: var(--tone); background: none; }
+.lesson-card p { font-size: 13px; color: var(--text-secondary); }
+.lesson-card[data-tone='id'] { --tone: #2F5FA7; }
+.lesson-card[data-tone='class'] { --tone: #A0571B; }
+.lesson-card[data-tone='header'] { --tone: #2F5FA7; --tone-bg: #DCE7F7; border-color: #8BAEE0; }
+.lesson-card[data-tone='nav'] { --tone: #A0571B; --tone-bg: #FBE3CC; border-color: #E5A56B; }
+.lesson-card[data-tone='main'] { --tone: #2F7A4A; --tone-bg: #DEEEE2; border-color: #8CC39E; }
+.lesson-card[data-tone='footer'] { --tone: #6A4FA3; --tone-bg: #E7E0F3; border-color: #A897D3; }
+
+.lesson-example {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+  margin: 8px 0 10px;
+}
+.lesson-code {
+  margin: 0;
+  padding: 14px 16px;
+  overflow-x: auto;
+  font-size: 13px;
+  line-height: 1.6;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-inner);
+}
+.lesson-figure {
+  margin: 0;
+  padding: 10px 14px 14px;
+  background: #FFFDF9;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-inner);
+}
+.lesson-figure figcaption {
+  margin-bottom: 8px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.lesson-render { pointer-events: none; user-select: none; }
+
+.lesson-table {
+  width: 100%;
+  margin: 18px 0 12px;
+  font-size: 13px;
+  border-collapse: collapse;
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+.lesson-table :is(th, td) { padding: 8px 12px; text-align: left; border: 1px solid var(--border); }
+.lesson-table thead th { font-weight: 600; background: var(--accent-cream); }
+.lesson-table tbody th { font-weight: 500; color: var(--text-secondary); }
+.lesson-table [data-tone='id'] { color: #2F5FA7; }
+.lesson-table [data-tone='class'] { color: #A0571B; }
+
+.lesson-tip {
+  padding: 12px 16px;
+  font-size: 13.5px;
+  background: #FBE3CC;
+  border-radius: var(--radius-inner);
+}
+
+.lesson-points { max-width: 760px; margin: 10px 0; padding-left: 20px; }
+.lesson-points li { margin: 6px 0; }
+.lesson-points li::marker { color: var(--accent-wood); }
+
+.lesson-howto {
+  margin-top: 18px;
+  padding: 22px 24px 24px;
+  background: var(--surface);
+  border: 1px solid var(--accent-sand);
+  border-radius: var(--radius-panel);
+}
+.lesson-start { margin-top: 10px; height: 42px; padding: 0 18px; }
+
+@media (max-width: 760px) {
+  .lesson-example { grid-template-columns: minmax(0, 1fr); }
+  .lesson-title { font-size: 28px; }
+}
+
 /* ───────────── Адаптивность ───────────── */
 @media (max-height: 640px) and (min-width: 961px) {
   body { overflow: auto; }
@@ -581,6 +899,8 @@ kbd {
   .topbar { opacity: 1; }
   .is-ready .panel,
   .is-ready .topbar,
+  .login-card,
+  .toast,
   .instructions.is-entering,
   .feedback.is-updated,
   .code-line { animation: none; }
@@ -588,3 +908,17 @@ kbd {
   *::before,
   *::after { transition-duration: 0.01ms !important; }
 }
+
+/* Экран «Занятие окончено» */
+.finished-card { text-align: center; align-items: center; }
+.finished-mark {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  margin: 8px auto 0;
+  border-radius: 50%;
+  color: var(--status-success);
+  background: color-mix(in srgb, var(--status-success) 14%, transparent);
+}
+.finished-mark svg { width: 28px; height: 28px; }

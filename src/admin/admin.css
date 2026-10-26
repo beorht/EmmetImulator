@@ -1,0 +1,488 @@
+/* Панель преподавателя. Токены, кнопки и шапка бренда — из main.css. */
+
+body.admin-body { height: auto; min-height: 100%; overflow: auto; }
+
+.admin {
+  max-width: 1480px;
+  margin: 0 auto;
+  padding: 14px 16px 32px;
+}
+
+/* ───────────── Шапка ───────────── */
+.admin-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 16px;
+  padding: 2px 4px 14px;
+}
+
+.admin-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+
+.refresh-note {
+  margin-right: 4px;
+  font-size: 12px;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+.refresh-note.is-error { color: var(--status-error); }
+
+.btn-danger { color: var(--status-error); background: transparent; border-color: currentColor; }
+.btn-danger:hover { color: var(--bg); background: var(--status-error); border-color: var(--status-error); }
+
+/* ───────────── Сводка ───────────── */
+.summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: var(--gap);
+  margin-bottom: var(--gap);
+}
+
+.stat {
+  padding: 16px 18px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-panel);
+}
+
+.stat-label {
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--wood-text);
+}
+
+.stat-value {
+  margin-top: 6px;
+  font: 500 34px/1 var(--font-display);
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+.stat-value small { font-size: 18px; color: var(--text-muted); }
+
+.stat-note { margin-top: 6px; font-size: 12.5px; color: var(--text-secondary); }
+
+/* ───────────── Матрица ───────────── */
+.admin-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-panel);
+}
+
+.admin-card-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 16px;
+  padding: 16px var(--pad) 0;
+}
+
+.admin-title {
+  margin: 0;
+  font: 500 22px/1.2 var(--font-display);
+  letter-spacing: 0.02em;
+  color: var(--ink);
+}
+
+.matrix-tools { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.section-tabs {
+  display: inline-flex;
+  padding: 3px;
+  background: var(--accent-cream);
+  border-radius: 10px;
+}
+.section-tab {
+  height: 30px;
+  padding: 0 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: none;
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.section-tab[aria-pressed='true'] { color: var(--ink); background: var(--surface); box-shadow: 0 1px 3px rgb(59 56 53 / 0.15); }
+
+.search,
+.sort {
+  height: 36px;
+  padding: 0 12px;
+  font: inherit;
+  font-size: 13px;
+  color: var(--text-primary);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+.search { width: 220px; }
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+  margin: 0;
+  padding: 12px var(--pad) 4px;
+  list-style: none;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+.legend li { display: flex; align-items: center; gap: 7px; }
+
+.matrix-wrap {
+  overflow-x: auto;
+  padding: 8px var(--pad) var(--pad);
+}
+
+.matrix {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 2px;
+  font-size: 12.5px;
+  font-variant-numeric: tabular-nums;
+}
+
+.matrix th { font-weight: 600; }
+
+.matrix thead th {
+  padding: 4px 4px 8px;
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+/* Сложность задания — цветная черта над номером */
+.matrix thead .col-task {
+  min-width: 22px;
+  padding: 4px 0 8px;
+  font-size: 11px;
+  letter-spacing: 0;
+  color: var(--text-secondary);
+  border-top: 3px solid var(--accent-cream);
+  cursor: help;
+}
+.matrix thead .col-task[data-level='2'] { border-top-color: var(--accent-sand); }
+.matrix thead .col-task[data-level='3'] { border-top-color: var(--accent-wood); }
+
+.col-name {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  width: 190px;
+  max-width: 190px;
+  text-align: left;
+  background: var(--bg);
+}
+
+.student-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 5px 6px;
+  font-weight: 600;
+  text-align: left;
+  background: none;
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.student-link:hover { background: var(--accent-cream); }
+.student-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.online-dot {
+  width: 7px;
+  height: 7px;
+  flex: none;
+  border: 1.5px solid var(--accent-sand);
+  border-radius: 50%;
+}
+.online-dot.is-online { background: var(--status-success); border-color: var(--status-success); }
+
+.cell,
+.cell-swatch {
+  height: 28px;
+  min-width: 22px;
+  font-weight: 600;
+  text-align: center;
+  border-radius: 7px;
+}
+.cell-swatch { display: inline-grid; place-items: center; width: 24px; min-width: 0; height: 22px; font-size: 11px; }
+
+[data-state='solved'].cell,
+[data-state='solved'].cell-swatch { color: var(--status-success); background: var(--status-success-bg); }
+[data-state='tried'].cell,
+[data-state='tried'].cell-swatch { color: var(--status-partial); background: var(--status-partial-bg); }
+[data-state='opened'].cell,
+[data-state='opened'].cell-swatch { background: var(--surface); box-shadow: inset 0 0 0 1.5px var(--accent-sand); }
+[data-state='none'].cell,
+[data-state='none'].cell-swatch { background: var(--surface); box-shadow: inset 0 0 0 1px var(--border); }
+/* Работы нет в наборе студента — клетка почти не видна */
+[data-state='unassigned'].cell,
+[data-state='unassigned'].cell-swatch { background: transparent; box-shadow: none; }
+[data-state='unassigned'].cell::before,
+[data-state='unassigned'].cell-swatch::before { content: '·'; color: var(--accent-sand); }
+
+/* Признаки списывания — красный уголок в ячейке */
+.cell.is-flagged,
+.cell-swatch.is-flagged { position: relative; }
+.cell.is-flagged::after,
+.cell-swatch.is-flagged::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  border-style: solid;
+  border-width: 0 9px 9px 0;
+  border-color: transparent var(--status-error) transparent transparent;
+  border-top-right-radius: 7px;
+}
+
+.col-num { padding: 0 6px; text-align: right; white-space: nowrap; }
+.col-time { padding: 0 6px; color: var(--text-secondary); white-space: nowrap; }
+.has-warning { color: var(--status-error); font-weight: 600; }
+
+.progress-label { display: inline-block; min-width: 34px; font-weight: 600; }
+.progress-label.is-complete { color: var(--status-success); }
+.progress-label small { color: var(--text-muted); }
+
+.matrix tfoot th { padding-top: 8px; font-size: 11.5px; color: var(--text-muted); }
+.matrix tfoot tr:first-child > * { border-top: 1px solid var(--border); padding-top: 8px; }
+
+/* Чем больше студентов решили задание, тем насыщеннее ячейка */
+.col-task-total {
+  height: 26px;
+  font-weight: 600;
+  text-align: center;
+  background: rgb(85 116 63 / calc(var(--share) * 0.28));
+  border-radius: 6px;
+}
+.col-task-avg { font-size: 11px; text-align: center; color: var(--text-muted); }
+
+.matrix-empty { padding: 24px; text-align: center; color: var(--text-muted); }
+
+/* ───────────── Окна ───────────── */
+.sheet {
+  width: min(100% - 32px, 860px);
+  max-height: min(100dvh - 48px, 900px);
+  padding: 0;
+  color: var(--text-primary);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-panel);
+  box-shadow: 0 24px 60px -24px rgb(59 56 53 / 0.45);
+}
+.sheet[open] { display: flex; flex-direction: column; animation: panel-rise 420ms var(--ease-soft) both; }
+.sheet::backdrop { background: rgb(59 56 53 / 0.38); }
+.keys-sheet { width: min(100% - 32px, 560px); }
+
+.sheet-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 22px 12px;
+}
+
+.sheet-title {
+  margin: 2px 0 4px;
+  font: 500 24px/1.2 var(--font-display);
+  letter-spacing: 0.02em;
+  color: var(--ink);
+}
+
+.sheet-meta { font-size: 12.5px; color: var(--text-secondary); }
+.key-text { font-family: var(--font-code); letter-spacing: 0.08em; text-transform: none; }
+
+.sheet-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 0 22px 14px;
+}
+.sheet-stats p {
+  padding: 6px 12px;
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  background: var(--accent-cream);
+  border-radius: 999px;
+}
+.sheet-stats b { color: var(--ink); }
+.sheet-stats .has-warning b { color: var(--status-error); }
+
+.task-list { flex: 1; min-height: 0; overflow-y: auto; padding: 0 22px; border-top: 1px solid var(--border); }
+
+.task-list-head,
+.task-row summary {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr) 112px 64px 92px 56px 72px;
+  align-items: center;
+  gap: 10px;
+}
+
+.task-list-head {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: 10px 8px 6px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  background: var(--bg);
+}
+.task-list-head span:nth-child(n + 4) { text-align: right; }
+
+.task-row { border-bottom: 1px solid var(--border); }
+.task-row summary {
+  padding: 9px 8px;
+  list-style: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.task-row summary::-webkit-details-marker { display: none; }
+.task-row summary:hover { background: var(--accent-cream); }
+.task-row[open] summary { background: var(--accent-cream); }
+
+.task-num { font-weight: 600; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+.task-name { overflow: hidden; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
+.task-name small { margin-left: 8px; font-size: 11px; font-weight: 500; color: var(--text-muted); }
+.task-metric { text-align: right; font-variant-numeric: tabular-nums; color: var(--text-secondary); }
+
+.badge {
+  justify-self: start;
+  padding: 2px 9px;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 999px;
+}
+.badge[data-state='solved'] { color: var(--status-success); background: var(--status-success-bg); }
+.badge[data-state='tried'] { color: var(--status-partial); background: var(--status-partial-bg); }
+.badge[data-state='opened'],
+.badge[data-state='none'] { color: var(--text-muted); background: var(--surface); box-shadow: inset 0 0 0 1px var(--border); }
+
+.task-detail { padding: 4px 8px 14px 46px; }
+.task-breakdown { font-size: 12.5px; color: var(--text-secondary); }
+.task-flags { margin-bottom: 4px; font-size: 12.5px; font-weight: 600; color: var(--status-error); }
+.task-code-label {
+  margin-top: 8px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.task-code {
+  max-height: 260px;
+  margin: 6px 0 0;
+  padding: 10px 14px;
+  overflow: auto;
+  font-size: 12.5px;
+  line-height: 1.6;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-inner);
+}
+.task-empty { margin-top: 6px; font-size: 12.5px; color: var(--text-muted); }
+
+.sheet-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 14px 22px 18px;
+  border-top: 1px solid var(--border);
+}
+.sheet-hint { font-size: 12px; color: var(--text-muted); }
+.sheet-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+
+/* ───────────── Ключи ───────────── */
+.keys-table {
+  display: block;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 0 22px 8px;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.keys-table th {
+  padding: 8px 10px 6px 0;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-align: left;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.keys-table td { padding: 5px 10px 5px 0; border-top: 1px solid var(--border); }
+.keys-table td:first-child { width: 32px; color: var(--text-muted); }
+.keys-table td:nth-child(2) { width: 100%; }
+.keys-table :is(th, td):last-child { padding-right: 0; text-align: right; white-space: nowrap; }
+
+.key-copy {
+  padding: 3px 10px;
+  font: 500 14px/1.4 var(--font-code);
+  letter-spacing: 0.1em;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: copy;
+}
+.key-copy:hover { border-color: var(--accent-sand); }
+.key-copy.is-copied { color: var(--status-success); border-color: var(--status-success); }
+.key-copy.is-copied::after { content: ' ✓'; }
+
+/* ───────────── Печать карточек с ключами ───────────── */
+.print-sheet { display: none; }
+
+@media print {
+  body.admin-body { background: #fff; }
+  .admin,
+  .login-screen { display: none !important; }
+  .print-sheet {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  .key-card {
+    padding: 16px 18px;
+    border: 1px dashed #999;
+    break-inside: avoid;
+  }
+  .key-card-site { font-size: 10px; color: #555; }
+  .key-card-name { margin-top: 6px; font-size: 14px; font-weight: 600; }
+  .key-card-key { margin-top: 6px; font: 600 24px/1 var(--font-code); letter-spacing: 0.14em; }
+}
+
+@media (max-width: 720px) {
+  .admin-actions .btn span { display: none; }
+  .search { width: 100%; }
+  .matrix-tools { width: 100%; }
+  .task-list-head,
+  .task-row summary { grid-template-columns: 24px minmax(0, 1fr) 96px 48px; }
+  .task-list-head span:nth-child(n + 5),
+  .task-row summary > span:nth-child(n + 5) { display: none; }
+  .task-detail { padding-left: 8px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sheet[open] { animation: none; }
+}
+
+.session-banner {
+  margin: 0 0 16px;
+  padding: 12px 16px;
+  font-size: 13px;
+  color: var(--status-error);
+  background: color-mix(in srgb, var(--status-error) 8%, var(--bg));
+  border: 1px solid color-mix(in srgb, var(--status-error) 35%, transparent);
+  border-radius: var(--radius-panel);
+}

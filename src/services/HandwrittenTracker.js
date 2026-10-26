@@ -6,9 +6,11 @@ import { invertedEffects } from '@codemirror/commands';
  * Отслеживает, какие участки документа ученик набрал или вставил сам,
  * а какие появились из развёртывания Emmet. Хранится список интервалов [from, to).
  *
- * - набор с клавиатуры, вставка и перетаскивание (userEvent «input.*», кроме
- *   «input.complete» — так помечено развёртывание Emmet) добавляют интервалы;
- * - любые другие вставки (Emmet, программные изменения) вырезают свои участки;
+ * - «чистыми» считаются только развёртывание Emmet (userEvent «input.complete»)
+ *   и отмена/повтор — их участки вырезаются из пометок;
+ * - всё остальное (набор, вставка, перенос строк, комментирование и любые
+ *   будущие команды редактора) помечается как ручной ввод — новая команда
+ *   не может «отмыть» HTML, даже если о ней забыли;
  * - отмена/повтор восстанавливают пометки через invertedEffects, поэтому
  *   Ctrl+Z не «отмывает» набранный вручную HTML.
  */
@@ -51,7 +53,7 @@ function intersect(intervals, from, to) {
     .filter(([a, b]) => b > a);
 }
 
-const isHandwrittenInput = (tr) => tr.isUserEvent('input') && !tr.isUserEvent(EMMET_EVENT);
+const isClean = (tr) => tr.isUserEvent(EMMET_EVENT) || tr.isUserEvent('undo') || tr.isUserEvent('redo');
 
 const handwrittenField = StateField.define({
   create: () => [],
@@ -63,7 +65,7 @@ const handwrittenField = StateField.define({
         if (toB > fromB) inserted.push([fromB, toB]);
       });
       next = mapIntervals(next, tr.changes);
-      next = isHandwrittenInput(tr) ? normalize([...next, ...inserted]) : subtract(next, inserted);
+      next = isClean(tr) ? subtract(next, inserted) : normalize([...next, ...inserted]);
     }
     for (const effect of tr.effects) {
       if (effect.is(restoreHandwritten)) next = normalize([...next, ...effect.value]);

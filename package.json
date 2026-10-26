@@ -6,10 +6,12 @@
     "doc": "docs"
   },
   "scripts": {
-    "test": "vitest run",
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "start": "node server/index.js",
+    "keys": "node scripts/generate-keys.js",
+    "test": "vitest run"
   },
   "keywords": [],
   "type": "module",

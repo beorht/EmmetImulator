@@ -2,13 +2,13 @@ import exercises from '../data/exercises.json';
 import { expandAbbreviation } from './EmmetService.js';
 
 /**
- * Хранит практические работы, текущий индекс и решённые задания.
+ * Хранит план студента (работы и шаги с теорией), текущий индекс и решённые задания.
  * Ожидаемый HTML берётся из expectedHtml, а если его нет —
- * получается настоящим развёртыванием emmetExpression.
+ * получается настоящим развёртыванием emmetExpression. У теории (kind: 'lesson') его нет.
  */
 export class ExerciseStore {
   constructor(list = exercises) {
-    this.list = list.map((exercise) => ({
+    this.list = list.map((exercise) => (exercise.kind === 'lesson' ? exercise : {
       ...exercise,
       expectedHtml: exercise.expectedHtml ?? expandAbbreviation(exercise.emmetExpression).html,
     }));
@@ -23,6 +23,27 @@ export class ExerciseStore {
 
   get count() {
     return this.list.length;
+  }
+
+  get tasks() {
+    return this.list.filter((item) => item.kind !== 'lesson');
+  }
+
+  /** Номер работы среди работ, без шагов с теорией (для теории — null). */
+  taskNumber(index = this.index) {
+    const item = this.list[index];
+    return item.kind === 'lesson' ? null : this.list.slice(0, index + 1).filter((entry) => entry.kind !== 'lesson').length;
+  }
+
+  /**
+   * С чего продолжить: первая нерешённая работа. Если перед ней теория, а раздел
+   * ещё не начат, — сначала теория.
+   */
+  resumeIndex() {
+    const first = this.list.findIndex((item) => item.kind !== 'lesson' && !this.solved.has(item.id));
+    if (first === -1) return 0;
+    const before = this.list[first - 1];
+    return before?.kind === 'lesson' ? first - 1 : first;
   }
 
   select(index) {

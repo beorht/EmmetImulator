@@ -15,6 +15,11 @@ export function expandAbbreviation(abbreviation, { baseIndent = '', withCursor =
   const options = { 'output.indent': INDENT, 'output.baseIndent': baseIndent };
   if (withCursor) options['output.field'] = (_index, placeholder) => FIELD + placeholder;
 
+  // Текст в {…} Emmet вставляет как есть — так в сокращение можно спрятать готовый HTML.
+  if (/\{[^}]*[<>]/.test(abbreviation)) {
+    throw new EmmetError('В тексте {…} нельзя писать HTML-теги — получите их самим сокращением.');
+  }
+
   let output;
   try {
     output = expand(abbreviation, { options });
@@ -27,10 +32,47 @@ export function expandAbbreviation(abbreviation, { baseIndent = '', withCursor =
   return { html, cursor: firstField === -1 ? html.length : firstField };
 }
 
-/** Ищет сокращение слева от позиции курсора в строке. */
-export function extractAbbreviation(line, position) {
+/**
+ * Ищет сокращение слева от позиции курсора в строке.
+ * wholeLineOnly — только если вся строка до курсора и есть сокращение (для заданий,
+ * где HTML пишут руками: Tab в середине разметки должен ставить отступ, а не разворачивать).
+ */
+export function extractAbbreviation(line, position, { wholeLineOnly = false } = {}) {
+  const whole = wholeLineAbbreviation(line, position);
+  if (whole || wholeLineOnly) return whole;
   const found = extract(line, position, { type: 'markup', lookAhead: false });
   return found ? { abbreviation: found.abbreviation, start: found.start, end: found.end } : null;
+}
+
+/**
+ * Если в строке до курсора нет ничего, кроме сокращения, берём его целиком.
+ * Экстрактор Emmet сканирует строку с конца и на длинных цепочках вида
+ * a[href=#]{…}+ul>li*5>a[href=#p$]{$}^^a обрывается посередине — тогда Tab развернул бы
+ * только хвост. Пробелы вне {…}, […] и кавычек означают, что в строке не одно сокращение.
+ */
+function wholeLineAbbreviation(line, position) {
+  const start = line.length - line.trimStart().length;
+  const candidate = line.slice(start, position);
+  if (!candidate || candidate.includes('<') || hasLooseSpace(candidate)) return null;
+  try {
+    expand(candidate);
+  } catch {
+    return null;
+  }
+  return { abbreviation: candidate, start, end: position };
+}
+
+function hasLooseSpace(text) {
+  let closer = null;
+  for (const char of text) {
+    if (closer) {
+      if (char === closer) closer = null;
+    } else if (char === '{') closer = '}';
+    else if (char === '[') closer = ']';
+    else if (char === '"' || char === "'") closer = char;
+    else if (/\s/.test(char)) return true;
+  }
+  return false;
 }
 
 function translateError(error) {

@@ -1,6 +1,9 @@
 import { EditorView, keymap, lineNumbers, highlightActiveLine, drawSelection, placeholder } from '@codemirror/view';
-import { EditorState, Transaction } from '@codemirror/state';
-import { defaultKeymap, history, historyKeymap, indentMore, indentLess } from '@codemirror/commands';
+import { EditorState, Transaction, Compartment } from '@codemirror/state';
+import {
+  defaultKeymap, history, historyKeymap, indentMore, indentLess,
+  moveLineUp, moveLineDown, copyLineUp, copyLineDown,
+} from '@codemirror/commands';
 import { html } from '@codemirror/lang-html';
 import { syntaxHighlighting, HighlightStyle, indentUnit, bracketMatching } from '@codemirror/language';
 import { tags as t } from '@lezer/highlight';
@@ -23,18 +26,75 @@ const warmHighlight = HighlightStyle.define([
 const PREVIEW_DELAY = 250;
 
 /**
+ * Сколько непробельных символов может появиться за одно нажатие.
+ * Больше — это не набор с клавиатуры, а вставка: автонаборщик, ИИ-помощник
+ * браузера, диктовка. Набор через IME (input.type.compose) не трогаем.
+ */
+const MAX_TYPED_CHARS = 2;
+
+// Перенос и дублирование строк не нужны для Emmet, а дубль готового HTML — та же вставка.
+const LINE_COMMANDS = new Set([moveLineUp, moveLineDown, copyLineUp, copyLineDown]);
+const editorKeymap = defaultKeymap.filter((binding) => !LINE_COMMANDS.has(binding.run));
+
+const PLACEHOLDER = {
+  emmet: 'Введите Emmet-сокращение и нажмите Tab',
+  html: 'Напишите HTML-код. Emmet тоже работает: сокращение в строке и Tab',
+};
+
+const KEY_HELP = {
+  emmet: `<kbd>Tab</kbd> развернуть и проверить
+    <span class="key-extra">· <kbd>Ctrl</kbd>+<kbd>Enter</kbd> проверить</span>
+    <span class="visually-hidden">. Отступ: Ctrl+] и Ctrl+[. Выйти из редактора: Esc, затем Tab.</span>`,
+  html: `<kbd>Ctrl</kbd>+<kbd>Enter</kbd> проверить
+    <span class="key-extra">· <kbd>Tab</kbd> отступ или Emmet</span>
+    <span class="visually-hidden">. Выйти из редактора: Esc, затем Tab.</span>`,
+};
+
+// Сокращение Emmet начинается с имени тега, точки, решётки или скобки — не с русского слова.
+const ABBREVIATION_START = /^[a-zA-Z.#(]/;
+
+const BLOCKED_MESSAGE = {
+  paste: 'Вставка в редактор отключена. Наберите сокращение сами.',
+  drop: 'Перетаскивать текст в редактор нельзя. Наберите сокращение сами.',
+  bulk: 'Текст появился целым куском, а не с клавиатуры. Наберите сокращение сами.',
+};
+
+function insertedChars(tr) {
+  let count = 0;
+  tr.changes.iterChanges((_fromA, _toA, _fromB, _toB, text) => {
+    count += text.toString().replace(/\s/g, '').length;
+  });
+  return count;
+}
+
+/** Какой запрещённый ввод несёт транзакция, если несёт. */
+export function blockedInput(tr) {
+  if (!tr.docChanged) return null;
+  if (tr.isUserEvent('input.paste')) return 'paste';
+  if (tr.isUserEvent('input.drop')) return 'drop';
+  if (tr.isUserEvent('input.type') && !tr.isUserEvent('input.type.compose') && insertedChars(tr) > MAX_TYPED_CHARS) {
+    return 'bulk';
+  }
+  return null;
+}
+
+/**
  * Редактор ученика.
  * Tab: если слева от курсора есть Emmet-сокращение — разворачивает его и
  * сразу проверяет результат; если сокращения нет — просто запускает проверку.
  * Отступы: Ctrl+] / Ctrl+[ . Выход из редактора с клавиатуры: Esc, затем Tab.
  */
 export class CodeEditorPanel {
-  constructor(root, { store, validate, onResult }) {
+  constructor(root, { store, validate, onResult, onBlocked, onPreview = () => {} }) {
     this.root = root;
     this.store = store;
     this.validate = validate;
     this.onResult = onResult;
+    this.onBlocked = onBlocked;
+    this.onPreview = onPreview;
     this.escapePressed = false;
+    this.mode = 'emmet';
+    this.placeholder = new Compartment();
 
     root.innerHTML = `
       <header class="panel-head">
@@ -48,11 +108,7 @@ export class CodeEditorPanel {
         <div class="editor"></div>
         <div class="editor-bar">
           <button class="preview-toggle" type="button" aria-controls="student-preview">${icons.eye}<span>Результат</span></button>
-          <p class="key-help" id="key-help">
-            <kbd>Tab</kbd> развернуть и проверить
-            <span class="key-extra">· <kbd>Ctrl</kbd>+<kbd>Enter</kbd> проверить</span>
-            <span class="visually-hidden">. Отступ: Ctrl+] и Ctrl+[. Выйти из редактора: Esc, затем Tab.</span>
-          </p>
+          <p class="key-help" id="key-help">${KEY_HELP.emmet}</p>
         </div>
         <div class="student-preview" id="student-preview"></div>
       </div>
@@ -63,6 +119,7 @@ export class CodeEditorPanel {
     `;
 
     this.title = root.querySelector('.panel-title');
+    this.keyHelp = root.querySelector('.key-help');
     this.lessonCount = root.querySelector('.lesson-count');
 
     this.instructions = new ExerciseInstructions(root.querySelector('.instructions'));
@@ -76,7 +133,8 @@ export class CodeEditorPanel {
     this.previewBox.append(this.preview.element);
     this.previewToggle.addEventListener('click', () => this.setPreviewOpen(this.previewBox.hidden));
     // На невысоких экранах предпросмотр свёрнут, чтобы редактору хватило места.
-    this.setPreviewOpen(window.innerHeight >= 820);
+    this.previewOpen = window.innerHeight >= 820;
+    this.setPreviewOpen(this.previewOpen);
 
     root.querySelector('[data-action="check"]').addEventListener('click', () => this.checkFromButton());
 
@@ -112,9 +170,16 @@ export class CodeEditorPanel {
           html({ autoCloseTags: false }),
           syntaxHighlighting(warmHighlight),
           handwrittenTracking(),
-          placeholder('Введите Emmet-сокращение и нажмите Tab'),
+          this.placeholder.of(placeholder(PLACEHOLDER.emmet)),
           tabKeymap,
-          keymap.of([...defaultKeymap, ...historyKeymap]),
+          keymap.of([...editorKeymap, ...historyKeymap]),
+          // Последний рубеж: вставка любым путём (в том числе средней кнопкой мыши) отменяется.
+          EditorState.transactionFilter.of((tr) => {
+            const kind = blockedInput(tr);
+            if (!kind) return tr;
+            queueMicrotask(() => this.block(kind));
+            return [];
+          }),
           EditorView.contentAttributes.of({
             'aria-label': 'Редактор кода ученика',
             'aria-describedby': 'key-help',
@@ -123,6 +188,16 @@ export class CodeEditorPanel {
             autocorrect: 'off',
           }),
           EditorView.domEventHandlers({
+            paste: (event) => {
+              event.preventDefault();
+              this.block('paste');
+              return true;
+            },
+            drop: (event) => {
+              event.preventDefault();
+              this.block('drop');
+              return true;
+            },
             keydown: (event) => {
               // Esc «разблокирует» следующий Tab, чтобы фокус мог уйти из редактора.
               if (event.key === 'Escape') this.escapePressed = true;
@@ -144,8 +219,18 @@ export class CodeEditorPanel {
       return false; // браузер переносит фокус дальше
     }
     if (!view.state.selection.main.empty) return indentMore(view);
+    const { head } = view.state.selection.main;
 
-    if (this.expandAt(view.state.selection.main.head)) this.check();
+    if (this.mode === 'html') {
+      // HTML пишут руками: Tab — отступ, а сокращение разворачивается, только если оно — вся строка.
+      const line = view.state.doc.lineAt(head);
+      const found = extractAbbreviation(line.text, head - line.from, { wholeLineOnly: true });
+      if (found && ABBREVIATION_START.test(found.abbreviation)) this.expandAt(head, found);
+      else view.dispatch(view.state.replaceSelection(INDENT));
+      return true;
+    }
+
+    if (this.expandAt(head)) this.check();
     return true;
   }
 
@@ -153,16 +238,18 @@ export class CodeEditorPanel {
    * Разворачивает сокращение слева от позиции. Возвращает false, если
    * сокращение содержит ошибку (о ней уже сообщено ученику).
    */
-  expandAt(position) {
+  expandAt(position, found = null) {
     const { state } = this.view;
     const line = state.doc.lineAt(position);
-    const found = extractAbbreviation(line.text, position - line.from);
+    found ??= extractAbbreviation(line.text, position - line.from);
     if (!found) return true;
 
     const baseIndent = /^\s*/.exec(line.text)[0];
     try {
       const { html, cursor } = expandAbbreviation(found.abbreviation, { baseIndent, withCursor: true });
       const from = line.from + found.start;
+      // Длинное сокращение прокрутило редактор вправо — после развёртывания строки короткие.
+      this.view.scrollDOM.scrollLeft = 0;
       this.view.dispatch({
         changes: { from, to: line.from + found.end, insert: html },
         selection: { anchor: from + cursor },
@@ -195,9 +282,15 @@ export class CodeEditorPanel {
     this.report(result);
   }
 
+  /** Запрещённый ввод: сообщаем ученику и в статистику, но попыткой решения это не считается. */
+  block(kind) {
+    this.feedback.show({ status: 'error', title: 'Так нельзя', message: BLOCKED_MESSAGE[kind] });
+    this.onBlocked(kind);
+  }
+
   report(result) {
     this.feedback.show(result, { canAdvance: this.store.index < this.store.count - 1 });
-    this.onResult(result);
+    this.onResult(result, this.view.state.doc.toString());
   }
 
   schedulePreview() {
@@ -207,14 +300,17 @@ export class CodeEditorPanel {
 
   renderPreview() {
     clearTimeout(this.previewTimer);
-    this.preview.render(this.view.state.doc.toString());
+    const code = this.view.state.doc.toString();
+    if (this.mode === 'emmet') this.preview.render(code);
+    this.onPreview(code);
   }
 
   load(exercise) {
     this.title.textContent = exercise.title;
-    this.lessonCount.textContent = `${this.store.index + 1} / ${this.store.count}`;
+    this.lessonCount.textContent = `${this.store.taskNumber()} / ${this.store.tasks.length}`;
     this.instructions.load(exercise);
-    this.feedback.reset();
+    this.setMode(exercise.mode === 'html' ? 'html' : 'emmet');
+    this.feedback.reset(this.mode);
     this.view.dispatch({
       changes: { from: 0, to: this.view.state.doc.length, insert: '' },
       selection: { anchor: 0 },
@@ -224,8 +320,20 @@ export class CodeEditorPanel {
     this.renderPreview();
   }
 
+  /** emmet — только сокращения; html — разметку можно писать руками, схема кода видна слева. */
+  setMode(mode) {
+    if (mode === this.mode) return;
+    this.mode = mode;
+    this.view.dispatch({ effects: this.placeholder.reconfigure(placeholder(PLACEHOLDER[mode])) });
+    this.keyHelp.innerHTML = KEY_HELP[mode];
+    // В заданиях на контейнеры результат виден слева, своя панель результата не нужна.
+    this.previewToggle.hidden = mode === 'html';
+    this.setPreviewOpen(this.previewOpen);
+  }
+
   setPreviewOpen(open) {
-    this.previewBox.hidden = !open;
+    this.previewOpen = open;
+    this.previewBox.hidden = !open || this.mode === 'html';
     this.previewToggle.setAttribute('aria-expanded', String(open));
     this.previewToggle.title = open ? 'Скрыть результат' : 'Показать результат';
   }

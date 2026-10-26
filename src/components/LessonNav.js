@@ -27,17 +27,24 @@ export class LessonNav {
 
   render() {
     const { store } = this;
-    this.count.textContent = `${store.index + 1} / ${store.count}`;
+    const number = store.taskNumber();
+    this.count.textContent = number ? `${number} / ${store.tasks.length}` : 'Теория';
     this.prevButton.disabled = store.index === 0;
     this.nextButton.disabled = store.index === store.count - 1;
     this.dots.innerHTML = store.list
       .map((exercise, i) => {
         const solved = store.solved.has(exercise.id);
+        const lesson = exercise.kind === 'lesson';
         const classes = ['lesson-dot'];
         if (i === store.index) classes.push('is-current');
         if (solved) classes.push('is-solved');
+        if (lesson) classes.push('is-lesson');
+        if (exercise.section === 'containers') classes.push('is-containers');
+        const name = lesson
+          ? escapeHtml(exercise.title)
+          : `Практическая работа ${store.taskNumber(i)}: ${escapeHtml(exercise.title)}${solved ? ', решено' : ''}`;
         return `<li><button type="button" class="${classes.join(' ')}" data-index="${i}"
-          aria-label="Практическая работа ${i + 1}: ${escapeHtml(exercise.title)}${solved ? ', решено' : ''}"
+          aria-label="${name}" title="${name}"
           ${i === store.index ? 'aria-current="step"' : ''}></button></li>`;
       })
       .join('');

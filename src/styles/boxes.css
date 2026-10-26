@@ -1,0 +1,95 @@
+/*
+ * Схема «коробок», как в презентации про контейнеры: каждый контейнер — цветная
+ * коробка с подписью (header — синяя, nav — оранжевая, main — зелёная, footer —
+ * фиолетовая, div — пунктир), а у остальных элементов рядом стоит метка тега.
+ * Подписи берутся из data-label, его проставляет sanitize() в PreviewFrame.
+ * Файл подключается и к странице (теория), и внутрь iframe предпросмотра.
+ */
+.boxes {
+  --box-line: #6AA57E;
+  --box-fill: rgb(255 255 255 / 0.55);
+  --box-ink: #2F7A4A;
+  --label-bg: #DEEEE2;
+  font: 14px/1.45 'Montserrat', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  color: #1F2933;
+}
+
+.boxes :is(div, header, nav, main, footer, section, article, aside) {
+  position: relative;
+  margin: 8px 0;
+  padding: 30px 12px 10px;
+  background: var(--box-fill);
+  border: 1.5px dashed var(--box-line);
+  border-radius: 10px;
+}
+
+.boxes :is(div, header, nav, main, footer, section, article, aside)::before {
+  content: attr(data-label);
+  position: absolute;
+  top: 7px;
+  left: 10px;
+  padding: 1px 7px;
+  font: 600 11px/1.4 'JetBrains Mono', ui-monospace, monospace;
+  color: var(--box-ink);
+  background: var(--label-bg);
+  border-radius: 6px;
+}
+
+.boxes header { --box-line: #8BAEE0; --box-fill: #DCE7F7; --box-ink: #2F5FA7; --label-bg: rgb(255 255 255 / 0.6); }
+.boxes nav { --box-line: #E5A56B; --box-fill: #FBE3CC; --box-ink: #A0571B; --label-bg: rgb(255 255 255 / 0.6); }
+.boxes main { --box-line: #8CC39E; --box-fill: #DEEEE2; --box-ink: #2F7A4A; --label-bg: rgb(255 255 255 / 0.6); }
+.boxes footer { --box-line: #A897D3; --box-fill: #E7E0F3; --box-ink: #6A4FA3; --label-bg: rgb(255 255 255 / 0.6); }
+.boxes :is(header, nav, main, footer) { border-style: solid; border-width: 1px; }
+
+/* Меню — в строку, подпись стоит первой, как в презентации */
+.boxes nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 14px;
+  padding: 8px 12px;
+}
+.boxes nav::before { position: static; margin-right: 2px; }
+
+/* Пустой контейнер — тоже коробка, просто пониже */
+.boxes :is(div, header, nav, main, footer, section, article, aside):empty { min-height: 40px; }
+.boxes nav:empty { min-height: 0; }
+
+.boxes > :first-child { margin-top: 0; }
+.boxes > :last-child { margin-bottom: 0; }
+
+.boxes h1 { margin: 2px 0 4px; font-size: 24px; line-height: 1.2; }
+.boxes h2 { margin: 2px 0 4px; font-size: 19px; line-height: 1.25; }
+.boxes h3 { margin: 2px 0 4px; font-size: 16px; }
+.boxes p { margin: 4px 0; color: #3E4A56; }
+.boxes ul, .boxes ol { margin: 4px 0; padding-left: 20px; }
+.boxes a { color: #2F5FA7; text-decoration: underline; text-underline-offset: 3px; }
+.boxes button {
+  margin: 4px 6px 4px 0;
+  padding: 4px 12px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: #1F2933;
+  background: #FFFDF9;
+  border: 1px solid #C9C2B8;
+  border-radius: 8px;
+}
+
+/* Метка тега у элементов внутри коробок: серая — просто тег, синяя — с id, оранжевая — с class */
+.boxes [data-kind]::after {
+  content: attr(data-label);
+  display: inline-block;
+  margin-left: 8px;
+  padding: 0 6px;
+  font: 500 10.5px/1.6 'JetBrains Mono', ui-monospace, monospace;
+  vertical-align: 0.15em;
+  color: #6B7480;
+  background: #ECEAE6;
+  border-radius: 5px;
+}
+.boxes [data-kind='class']::after { color: #A0571B; background: #FBE3CC; }
+.boxes [data-kind='id']::after { color: #2F5FA7; background: #DCE7F7; }
+.boxes a[data-kind='tag']::after,
+.boxes button[data-kind='tag']::after { content: none; }

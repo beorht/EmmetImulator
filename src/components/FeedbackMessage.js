@@ -1,9 +1,16 @@
 import { escapeHtml } from '../services/highlight.js';
 
 const IDLE = {
-  status: 'idle',
-  title: 'Самостоятельная работа',
-  message: 'Получите с помощью Emmet такой же HTML, как в образце слева.',
+  emmet: {
+    status: 'idle',
+    title: 'Самостоятельная работа',
+    message: 'Получите с помощью Emmet такой же HTML, как в образце слева.',
+  },
+  html: {
+    status: 'idle',
+    title: 'Самостоятельная работа',
+    message: 'Напишите HTML так, чтобы ваша страница слева выглядела как образец под ней.',
+  },
 };
 
 /** Сообщение о результате проверки. Живой регион — читается скринридером. */
@@ -39,8 +46,8 @@ export class FeedbackMessage {
     this.box.classList.add('is-updated');
   }
 
-  reset() {
-    this.show(IDLE);
+  reset(mode = 'emmet') {
+    this.show(IDLE[mode] ?? IDLE.emmet);
     this.box.classList.remove('is-updated');
   }
 }

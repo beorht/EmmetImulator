@@ -1,0 +1,92 @@
+[
+  {
+    "id": "containers-01",
+    "title": "Карточка котика",
+    "description": "Заголовок, описание и кнопка относятся к одному котику. Сложите их в одну коробку-контейнер, как на схеме.",
+    "emmetExpression": "div.card>h2{Котик Барсик}+p{Любит спать и есть.}+button{Погладить}",
+    "mode": "html",
+    "section": "containers",
+    "difficulty": 1
+  },
+  {
+    "id": "containers-02",
+    "title": "Название сайта",
+    "description": "Название сайта на странице одно. Дайте заголовку уникальное имя, как на схеме.",
+    "emmetExpression": "h1#logo{Мой сайт}+p{Привет!}",
+    "mode": "html",
+    "section": "containers",
+    "difficulty": 1
+  },
+  {
+    "id": "containers-03",
+    "title": "Фрукты",
+    "description": "Три фрукта должны выглядеть одинаково. Дайте им одно общее имя для группы.",
+    "emmetExpression": "p.card{Яблоко}+p.card{Груша}+p.card{Слива}",
+    "mode": "html",
+    "section": "containers",
+    "difficulty": 1
+  },
+  {
+    "id": "containers-04",
+    "title": "Кнопки магазина",
+    "description": "У всех кнопок одинаковая форма, а главная кнопка ещё и выделена собственным уникальным именем.",
+    "emmetExpression": "button.btn{Назад}+button.btn#buy{Купить}+button.btn{Далее}",
+    "mode": "html",
+    "section": "containers",
+    "difficulty": 1
+  },
+  {
+    "id": "containers-05",
+    "title": "Коробки внутри коробок",
+    "description": "Страница — большая коробка, а в ней две карточки. Повторите вложенность со схемы.",
+    "emmetExpression": "div.page>(div.card>h2{Новости})+(div.card>h2{Погода})",
+    "mode": "html",
+    "section": "containers",
+    "difficulty": 2
+  },
+  {
+    "id": "containers-06",
+    "title": "Шапка блога",
+    "description": "Сверстайте шапку блога с меню. Обе ссылки пока ведут на #.",
+    "emmetExpression": "header>h1{Мой блог}+nav>a[href=#]{Главная}+a[href=#]{Статьи}",
+    "mode": "html",
+    "section": "containers",
+    "difficulty": 2
+  },
+  {
+    "id": "containers-07",
+    "title": "Главное на странице",
+    "description": "Положите статью в контейнер для основного содержимого страницы.",
+    "emmetExpression": "main>h2{Новая статья}+p{Текст статьи}",
+    "mode": "html",
+    "section": "containers",
+    "difficulty": 2
+  },
+  {
+    "id": "containers-08",
+    "title": "Подвал блога",
+    "description": "Внизу страницы — подвал с подписью и ссылкой для связи. Ссылка ведёт на #.",
+    "emmetExpression": "footer>p{2026 Мой блог}+a[href=#]{Написать нам}",
+    "mode": "html",
+    "section": "containers",
+    "difficulty": 2
+  },
+  {
+    "id": "containers-09",
+    "title": "Страница блога",
+    "description": "Соберите страницу блога целиком: шапка с меню, главное содержимое и подвал. Ссылки ведут на #.",
+    "emmetExpression": "(header>h1{Мой блог}+nav>a[href=#]{Главная}+a[href=#]{Статьи})+(main>h2{Новая статья}+p{Текст статьи})+footer>p{2026 Мой блог}",
+    "mode": "html",
+    "section": "containers",
+    "difficulty": 3
+  },
+  {
+    "id": "containers-10",
+    "title": "Сайт кафе",
+    "description": "Финальная работа: сайт кафе в одной общей коробке. У шапки, меню и карточек свои имена, как на схеме. Ссылки ведут на #.",
+    "emmetExpression": "div#page>(header.top>h1{Кафе Уют}+nav.menu>a[href=#]{Меню}+a[href=#]{Контакты})+(main>div.card>h2{Плов}+p{Фирменное блюдо}^div.card>h2{Чай}+p{Зелёный и чёрный})+footer>p{Ждём вас каждый день}",
+    "mode": "html",
+    "section": "containers",
+    "difficulty": 3
+  }
+]
